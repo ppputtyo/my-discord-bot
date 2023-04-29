@@ -15,7 +15,9 @@ use serenity::prelude::{Client, Context, EventHandler, GatewayIntents};
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
+use commands::dlmusic::*;
 use commands::neko::*;
+use commands::playmusic::*;
 
 // Handler構造体。取得したいイベントを実装する
 struct Handler;
@@ -50,7 +52,10 @@ async fn my_help(
 #[group]
 #[description("汎用コマンド")]
 #[summary("一般")]
-#[commands(neko)]
+#[commands(
+    neko, dlmusic, playmusic,play
+    //  join, deafen, leave, mute, ping, play, undeafen, unmute
+)]
 struct General;
 
 #[derive(Serialize, Deserialize)]
