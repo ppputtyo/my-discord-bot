@@ -1,3 +1,5 @@
+use std::fs;
+
 use crate::util::check_msg;
 
 use serenity::{
@@ -35,6 +37,11 @@ async fn leave(ctx: &Context, msg: &Message) -> CommandResult {
                 .say(&ctx.http, "ボイスチャンネルから切断しました")
                 .await,
         );
+
+        // audioディレクトリを削除
+        fs::remove_dir_all("audio").unwrap_or_else(|why| {
+            println!("{}", why);
+        });
     } else {
         check_msg(msg.reply(ctx, "ボイスチャンネルに入ってないよ").await);
     }

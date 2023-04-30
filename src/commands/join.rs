@@ -8,7 +8,7 @@ use serenity::{
 
 #[command]
 #[only_in(guilds)]
-async fn join(ctx: &Context, msg: &Message) -> CommandResult {
+pub(crate) async fn join(ctx: &Context, msg: &Message) -> CommandResult {
     // サーバ情報の取得
     let guild = msg.guild(&ctx.cache).unwrap();
     let guild_id = guild.id;

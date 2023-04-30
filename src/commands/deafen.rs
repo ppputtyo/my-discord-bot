@@ -2,7 +2,7 @@ use crate::util::check_msg;
 
 use serenity::{
     framework::standard::{macros::command, CommandResult},
-    model::prelude::{Channel::Guild, Message},
+    model::prelude::Message,
     prelude::Context,
 };
 #[command]

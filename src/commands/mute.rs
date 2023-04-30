@@ -19,7 +19,7 @@ async fn mute(ctx: &Context, msg: &Message) -> CommandResult {
     let handler_lock = match manager.get(guild_id) {
         Some(handler) => handler,
         None => {
-            check_msg(msg.reply(ctx, "Not in a voice channel").await);
+            check_msg(msg.reply(ctx, "ボイスチャンネルに入ってないよ").await);
 
             return Ok(());
         }
@@ -28,7 +28,7 @@ async fn mute(ctx: &Context, msg: &Message) -> CommandResult {
     let mut handler = handler_lock.lock().await;
 
     if handler.is_mute() {
-        check_msg(msg.channel_id.say(&ctx.http, "Already muted").await);
+        check_msg(msg.channel_id.say(&ctx.http, "既に静かにしてます").await);
     } else {
         if let Err(e) = handler.mute(true).await {
             check_msg(
@@ -38,7 +38,7 @@ async fn mute(ctx: &Context, msg: &Message) -> CommandResult {
             );
         }
 
-        check_msg(msg.channel_id.say(&ctx.http, "Now muted").await);
+        check_msg(msg.channel_id.say(&ctx.http, "静かにします…").await);
     }
 
     Ok(())

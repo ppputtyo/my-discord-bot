@@ -2,6 +2,7 @@ mod commands;
 mod util;
 
 use songbird::SerenityInit;
+use std::fs;
 
 use serenity::client::Context;
 
@@ -18,7 +19,7 @@ use serenity::{
     prelude::GatewayIntents,
 };
 
-use commands::{join::*, leave::*, neko::*, play::*, deafen::*, undeafen::*, mute::*, unmute::*, ping::*};
+use commands::{join::*, leave::*, neko::*, play::*, deafen::*, undeafen::*, mute::*, unmute::*, ping::*, skip::*};
 
 use crate::util::get_token;
 
@@ -74,7 +75,8 @@ async fn my_help(
     ping,   // ping-pong
     undeafen, 
     unmute, // mute解除
-    neko    // 猫の鳴き声
+    neko,   // 猫の鳴き声
+    skip,   // スキップ
 )]
 
 struct General;
@@ -113,5 +115,10 @@ async fn main() {
     // Ctrl+Cを検知した場合
     tokio::signal::ctrl_c().await.expect("");
     println!("Received Ctrl-C, shutting down.");
+
+    // audioディレクトリを削除
+    fs::remove_dir_all("audio").unwrap_or_else(|why| {
+        println!("{}", why);
+    });
 }
 

@@ -5,5 +5,6 @@ pub(crate) mod mute;
 pub(crate) mod neko;
 pub(crate) mod ping;
 pub(crate) mod play;
+pub(crate) mod skip;
 pub(crate) mod undeafen;
 pub(crate) mod unmute;

@@ -26,11 +26,11 @@ async fn unmute(ctx: &Context, msg: &Message) -> CommandResult {
             );
         }
 
-        check_msg(msg.channel_id.say(&ctx.http, "Unmuted").await);
+        check_msg(msg.channel_id.say(&ctx.http, "ミュート解除～～").await);
     } else {
         check_msg(
             msg.channel_id
-                .say(&ctx.http, "Not in a voice channel to unmute in")
+                .say(&ctx.http, "ボイスチャンネルに入ってないよ")
                 .await,
         );
     }
