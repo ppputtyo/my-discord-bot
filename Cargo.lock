@@ -557,6 +557,9 @@ dependencies = [
  "serenity",
  "songbird",
  "tokio",
+ "tracing",
+ "tracing-futures",
+ "tracing-subscriber",
 ]
 
 [[package]]

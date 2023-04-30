@@ -1,3 +1,9 @@
-pub mod dlmusic;
-pub mod neko;
-pub mod playmusic;
+pub(crate) mod deafen;
+pub(crate) mod join;
+pub(crate) mod leave;
+pub(crate) mod mute;
+pub(crate) mod neko;
+pub(crate) mod ping;
+pub(crate) mod play;
+pub(crate) mod undeafen;
+pub(crate) mod unmute;

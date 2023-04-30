@@ -1,30 +1,43 @@
 mod commands;
+mod util;
 
-use std::{collections::HashSet, fs::File, io::BufReader, usize};
+use songbird::SerenityInit;
 
-use serenity::async_trait;
+use serenity::client::Context;
+
+use serenity::{
+    async_trait,
+    client::{Client, EventHandler},
+    framework::{
+        standard::{
+            macros::group,
+        },
+        StandardFramework,
+    },
+    model::{gateway::Ready},
+    prelude::GatewayIntents,
+};
+
+use commands::{join::*, leave::*, neko::*, play::*, deafen::*, undeafen::*, mute::*, unmute::*, ping::*};
+
+use crate::util::get_token;
+
+
+use std::{collections::HashSet};
+
 use serenity::framework::standard::{
     help_commands,
-    macros::{group, help},
+    macros:: help,
     Args, CommandGroup, CommandResult, HelpOptions,
 };
-use serenity::framework::StandardFramework;
-use serenity::model::{channel::Message, gateway::Ready, id::UserId};
-use serenity::prelude::{Client, Context, EventHandler, GatewayIntents};
+use serenity::model::{channel::Message,  id::UserId};
 
-use serde::{Deserialize, Serialize};
-use serde_json::Result;
 
-use commands::dlmusic::*;
-use commands::neko::*;
-use commands::playmusic::*;
-
-// Handler構造体。取得したいイベントを実装する
 struct Handler;
 
 #[async_trait]
 impl EventHandler for Handler {
-    // Botが起動したときに走る処理
+    // Bot起動時の処理
     async fn ready(&self, _: Context, ready: Ready) {
         println!("{} is connected!", ready.user.name);
     }
@@ -53,47 +66,52 @@ async fn my_help(
 #[description("汎用コマンド")]
 #[summary("一般")]
 #[commands(
-    neko, dlmusic, playmusic,play
-    //  join, deafen, leave, mute, ping, play, undeafen, unmute
+    deafen, 
+    join,   // VCに参加
+    leave,  // VCから退出
+    mute,   // ミュート
+    play,   // 音楽再生
+    ping,   // ping-pong
+    undeafen, 
+    unmute, // mute解除
+    neko    // 猫の鳴き声
 )]
+
 struct General;
-
-#[derive(Serialize, Deserialize)]
-struct Token {
-    token: String,
-}
-
-//{"token": "This_is_Token"}
-// の形のトークンを取り出す関数
-fn get_token(file_name: &str) -> Result<String> {
-    let file = File::open(file_name).unwrap();
-    let reader = BufReader::new(file);
-    let t: Token = serde_json::from_reader(reader).unwrap();
-    Ok(t.token)
-}
 
 #[tokio::main]
 async fn main() {
-    // Discord Bot Token を設定
+    tracing_subscriber::fmt::init();
+
+    // トークンが記述されたconfigファイルを取得
     let token = get_token("config.json").expect("Err トークンが見つかりません");
 
-    // コマンド系の設定
+    // フレームワーク
     let framework = StandardFramework::new()
-        // |c| c はラムダ式
-        .configure(|c| c.prefix("~")) // コマンドプレフィックス
+        .configure(|c| c.prefix("~"))
         .help(&MY_HELP) // ヘルプコマンドを追加
-        .group(&GENERAL_GROUP); // general を追加するには,GENERAL_GROUP とグループ名をすべて大文字にする
+        .group(&GENERAL_GROUP);
 
-    let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
+    // 特権とされていないintentとメッセージに関するintent
+    let intents = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
+
     // Botのクライアントを作成
     let mut client = Client::builder(&token, intents)
-        .event_handler(Handler) // 取得するイベント
-        .framework(framework) // コマンドを登録
+        .event_handler(Handler)
+        .framework(framework)
+        .register_songbird()
         .await
-        .expect("Err creating client"); // エラーハンドリング
+        .expect("Err creating client");
 
-    // メインループ。Botを起動
-    if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
-    }
+    tokio::spawn(async move {
+        let _ = client
+            .start()
+            .await
+            .map_err(|why| println!("Client ended: {:?}", why));
+    });
+
+    // Ctrl+Cを検知した場合
+    tokio::signal::ctrl_c().await.expect("");
+    println!("Received Ctrl-C, shutting down.");
 }
+

@@ -9,6 +9,9 @@ edition = "2021"
 [dependencies]
 serde = "1.0.160"
 serde_json = "1.0.96"
-serenity = "0.11.5"
-tokio = {version = "1.28.0", features = ["macros", "rt-multi-thread"]}
+serenity = {versions = "0.11.5", features = ["client", "standard_framework", "voice", "rustls_backend"]}
+tokio = {version = "1.28.0", features = ["macros", "rt-multi-thread", "signal"]}
 songbird = "0.3.2"
+tracing = "0.1.37"
+tracing-subscriber = "0.3.17"
+tracing-futures = "0.2.5"
