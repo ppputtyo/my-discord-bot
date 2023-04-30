@@ -9,7 +9,7 @@ use serenity::{
 };
 use songbird::{create_player, ffmpeg};
 
-use chrono::{DateTime, Local};
+use chrono::Local;
 
 #[command]
 #[only_in(guilds)]

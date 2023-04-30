@@ -7,6 +7,7 @@ pub(crate) mod pause;
 pub(crate) mod ping;
 pub(crate) mod play;
 pub(crate) mod resume;
+pub(crate) mod saikoro;
 pub(crate) mod skip;
 pub(crate) mod undeafen;
 pub(crate) mod unmute;

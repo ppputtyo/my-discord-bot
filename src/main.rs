@@ -31,7 +31,8 @@ use commands::{
     ping::*, 
     skip::*, 
     pause::*,
-    resume::*
+    resume::*,
+    saikoro::*
 };
 
 use crate::util::get_token;
@@ -92,6 +93,7 @@ async fn my_help(
     skip,   // スキップ
     pause, // 一時停止
     resume,// 一時停止解除
+    saikoro, 
 )]
 
 struct General;
