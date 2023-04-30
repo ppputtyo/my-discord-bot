@@ -19,10 +19,14 @@ async fn leave(ctx: &Context, msg: &Message) -> CommandResult {
         .expect("Songbird Voice client placed in at initialisation.")
         .clone();
 
-    // ハンドラを持っているかどうか
-    let has_handler = manager.get(guild_id).is_some();
+    if let Some(handler_lock) = manager.get(guild_id) {
+        let handler = handler_lock.lock().await;
 
-    if has_handler {
+        let queue = handler.queue();
+        let _ = queue.stop();
+
+        check_msg(msg.channel_id.say(&ctx.http, "キューをクリアしたよ").await);
+
         // 切断を試みる
         if let Err(e) = manager.remove(guild_id).await {
             check_msg(

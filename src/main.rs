@@ -19,7 +19,20 @@ use serenity::{
     prelude::GatewayIntents,
 };
 
-use commands::{join::*, leave::*, neko::*, play::*, deafen::*, undeafen::*, mute::*, unmute::*, ping::*, skip::*};
+use commands::{
+    join::*, 
+    leave::*, 
+    neko::*, 
+    play::*, 
+    deafen::*,
+    undeafen::*,
+    mute::*, 
+    unmute::*,
+    ping::*, 
+    skip::*, 
+    pause::*,
+    resume::*
+};
 
 use crate::util::get_token;
 
@@ -77,6 +90,8 @@ async fn my_help(
     unmute, // mute解除
     neko,   // 猫の鳴き声
     skip,   // スキップ
+    pause, // 一時停止
+    resume,// 一時停止解除
 )]
 
 struct General;
