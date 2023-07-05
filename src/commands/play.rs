@@ -1,5 +1,3 @@
-use std::{process::Command, time::Instant};
-
 use crate::{commands::join::join, util::check_msg};
 
 use serenity::{
@@ -7,9 +5,7 @@ use serenity::{
     model::prelude::Message,
     prelude::Context,
 };
-use songbird::{create_player, ffmpeg};
-
-use chrono::Local;
+use songbird::{create_player, input::Restartable, tracks::Track};
 
 #[command]
 #[only_in(guilds)]
@@ -48,37 +44,18 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
     if let Some(handler_lock) = manager.get(guild_id) {
         let mut handler = handler_lock.lock().await;
 
-        let now = Instant::now();
+        let source = match Restartable::ytdl(url, true).await {
+            Ok(source) => source,
+            Err(why) => {
+                println!("Err starting source: {:?}", why);
 
-        let timestamp = Local::now().timestamp().to_string();
-        let filename = format!("audio/{}.mp3", timestamp);
+                check_msg(msg.channel_id.say(&ctx.http, "Error sourcing ffmpeg").await);
 
-        let output = Command::new("yt-dlp")
-            .args(&["-o", &filename, "-x", "--audio-format", "mp3", &url])
-            .output()
-            .expect("yt-dlpコマンド失敗…");
-        let dl_time = now.elapsed();
+                return Ok(());
+            }
+        };
 
-        if output.status.success() {
-            println!("音楽ダウンロード成功");
-            check_msg(
-                msg.channel_id
-                    .say(
-                        &ctx.http,
-                        format!("ダウンロード成功～～～({}ms)", dl_time.as_millis()),
-                    )
-                    .await,
-            );
-        } else {
-            let error = String::from_utf8_lossy(&output.stderr);
-            println!("Error: {}", error);
-        }
-
-        let source = ffmpeg(filename)
-            .await
-            .expect("This might fail: handle this error!");
-        let (mut audio, _audio_handle) = create_player(source);
-
+        let (mut audio, _) = create_player(source.into());
         audio.set_volume(0.5);
 
         // 排他的に音楽再生

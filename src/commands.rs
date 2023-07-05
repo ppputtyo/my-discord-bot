@@ -3,6 +3,7 @@ pub(crate) mod join;
 pub(crate) mod leave;
 pub(crate) mod mute;
 pub(crate) mod neko;
+pub(crate) mod nurupo;
 pub(crate) mod pause;
 pub(crate) mod ping;
 pub(crate) mod play;

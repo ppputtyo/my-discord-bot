@@ -2,7 +2,6 @@ mod commands;
 mod util;
 
 use songbird::SerenityInit;
-use std::fs;
 
 use serenity::client::Context;
 
@@ -32,11 +31,11 @@ use commands::{
     skip::*, 
     pause::*,
     resume::*,
-    saikoro::*
+    saikoro::*,
+    nurupo::*
 };
 
 use crate::util::get_token;
-
 
 use std::{collections::HashSet};
 
@@ -94,6 +93,7 @@ async fn my_help(
     pause, // 一時停止
     resume,// 一時停止解除
     saikoro, 
+    nurupo
 )]
 
 struct General;
@@ -132,10 +132,5 @@ async fn main() {
     // Ctrl+Cを検知した場合
     tokio::signal::ctrl_c().await.expect("");
     println!("Received Ctrl-C, shutting down.");
-
-    // audioディレクトリを削除
-    fs::remove_dir_all("audio").unwrap_or_else(|why| {
-        println!("{}", why);
-    });
 }
 
