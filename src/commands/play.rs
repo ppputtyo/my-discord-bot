@@ -5,7 +5,7 @@ use serenity::{
     model::prelude::Message,
     prelude::Context,
 };
-use songbird::{create_player, input::Restartable, tracks::Track};
+use songbird::{create_player, input::Restartable};
 
 #[command]
 #[only_in(guilds)]
@@ -37,7 +37,7 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
         .clone();
 
     // VCに接続していない場合は接続
-    if let None = manager.get(guild_id) {
+    if manager.get(guild_id).is_none() {
         join(ctx, msg, args).await.expect("VC接続失敗");
     }
 

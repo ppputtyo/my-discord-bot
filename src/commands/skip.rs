@@ -28,7 +28,7 @@ async fn skip(ctx: &Context, msg: &Message, _args: Args) -> CommandResult {
         if len == 0 {
             check_msg(
                 msg.channel_id
-                    .say(&ctx.http, format!("スキップする曲がないよ"))
+                    .say(&ctx.http, "スキップする曲がないよ".to_string())
                     .await,
             );
             return Ok(());
