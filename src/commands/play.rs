@@ -56,7 +56,7 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
         };
 
         let (mut audio, _) = create_player(source.into());
-        audio.set_volume(0.5);
+        audio.set_volume(0.05);
 
         // 排他的に音楽再生
         handler.enqueue(audio);
