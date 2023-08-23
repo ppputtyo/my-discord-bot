@@ -1,5 +1,6 @@
 # my-discord-bot
 
+<img src="images/demo.gif">
 
 [serenity](https://github.com/serenity-rs/serenity)と[songbird](https://github.com/serenity-rs/songbird)を利用した Rust 製音楽再生 bot です。
 
@@ -32,9 +33,10 @@
 | `nurupo`        | ガッを返す                                                |
 
 ## 使用方法
-1. yt-dlp、ffmpegをインストール
-2. discord bot登録してAPIを取得
-3. このリポジトリをcloneして`config_template.json`と同じ形式の`config.json`を作成してAPIを貼り付け
+
+1. yt-dlp、ffmpeg をインストール
+2. discord bot 登録して API を取得
+3. このリポジトリを clone して`config_template.json`と同じ形式の`config.json`を作成して API を貼り付け
 4. リポジトリ実行
 
-yt-dlp,ffmpegのインストール、discord botの登録方法などは[こちらのQittaの記事]で詳しく説明しています。
+yt-dlp,ffmpeg のインストール、discord bot の登録方法などは[こちらの Qitta の記事]で詳しく説明しています。
