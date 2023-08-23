@@ -35,8 +35,13 @@
 ## 使用方法
 
 1. yt-dlp、ffmpeg をインストール
-2. discord bot 登録して API を取得
-3. このリポジトリを clone して`config_template.json`と同じ形式の`config.json`を作成して API を貼り付け
-4. リポジトリ実行
+2. discord bot に登録して APIキー を取得
+3. このリポジトリを clone して`config_template.json`と同じ形式の`config.json`を作成して APIキー を貼り付け
+4. `cargo run --release`
 
 yt-dlpとffmpeg のインストール、discord bot の登録方法は[こちらの Qitta の記事](https://qiita.com/ppputtyo/items/bf95c9ccdba3b6042031)で詳しく説明しています。
+
+## 動作確認済み環境
+- Windows11
+
+(私のM1 MacではLLVMのリンカ周りでエラーが出て実行できませんでした。)
