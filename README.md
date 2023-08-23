@@ -39,4 +39,4 @@
 3. このリポジトリを clone して`config_template.json`と同じ形式の`config.json`を作成して API を貼り付け
 4. リポジトリ実行
 
-yt-dlp,ffmpeg のインストール、discord bot の登録方法などは[こちらの Qitta の記事]で詳しく説明しています。
+yt-dlpとffmpeg のインストール、discord bot の登録方法は[こちらの Qitta の記事](https://qiita.com/ppputtyo/items/bf95c9ccdba3b6042031)で詳しく説明しています。
