@@ -38,8 +38,6 @@ impl EventHandler for Handler {
 }
 
 #[help] // Helpコマンド
-#[individual_command_tip = "これはヘルプコマンド"] // Helpコマンドの説明
-#[strikethrough_commands_tip_in_guild = ""] // 使用できないコマンドについての説明を削除
 async fn my_help(
     ctx: &Context,
     msg: &Message,
@@ -57,28 +55,33 @@ async fn my_help(
 }
 
 #[group]
-#[description("汎用コマンド")]
-#[summary("一般")]
+#[summary("音楽関連")]
 #[commands(
     deafen,
     join,   // VCに参加
     leave,  // VCから退出
     mute,   // ミュート
     play,   // 音楽再生
-    ping,   // ping-pong
     undeafen,
     unmute, // mute解除
-    neko,   // 猫の鳴き声
     skip,   // スキップ
     pause, // 一時停止
     resume,// 一時停止解除
-    saikoro,
-    nurupo,
     seek,
     queue
 )]
 
-struct General;
+struct Music;
+#[group]
+#[summary("その他")]
+#[commands(
+    ping,   // ping-pong
+    neko,   // 猫の鳴き声
+    saikoro,
+    nurupo,
+)]
+
+struct Other;
 
 #[tokio::main]
 async fn main() {
@@ -91,7 +94,8 @@ async fn main() {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("~"))
         .help(&MY_HELP) // ヘルプコマンドを追加
-        .group(&GENERAL_GROUP);
+        .group(&MUSIC_GROUP)
+        .group(&OTHER_GROUP);
 
     // 特権とされていないintentとメッセージに関するintent
     let intents = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
