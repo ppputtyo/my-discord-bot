@@ -2,8 +2,8 @@ use crate::util::check_msg;
 
 use serenity::{
     framework::standard::{macros::command, CommandResult},
-    model::prelude::{Channel::Guild, Message},
-    prelude::Context,
+    model::prelude::Message,
+    prelude::{Context, Mentionable},
 };
 
 #[command]
@@ -36,21 +36,18 @@ pub(crate) async fn join(ctx: &Context, msg: &Message) -> CommandResult {
         .expect("Songbird Voice client placed in at initialisation.")
         .clone();
 
-    let _handler = manager.join(guild_id, connect_to).await;
+    let (_, success) = manager.join(guild_id, connect_to).await;
 
-    let channel_name = match guild.channels.get(&connect_to).unwrap() {
-        Guild(guild_channel) => &guild_channel.name,
-        _ => todo!(),
-    };
-
-    check_msg(
-        msg.channel_id
-            .say(
-                &ctx.http,
-                format!("ボイスチャンネル「{}」に接続しました！", channel_name),
-            )
-            .await,
-    );
+    if let Ok(_channel) = success {
+        check_msg(
+            msg.channel_id
+                .say(
+                    &ctx.http,
+                    format!("{}に接続しました！", connect_to.mention()),
+                )
+                .await,
+        );
+    }
 
     Ok(())
 }

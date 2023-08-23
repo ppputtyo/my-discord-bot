@@ -1,11 +1,44 @@
-use crate::{commands::join::join, util::check_msg};
+use std::{sync::Arc, time::Duration};
+
+use crate::{
+    commands::join::join,
+    util::{check_msg, display_queue, SeekBar},
+};
 
 use serenity::{
+    async_trait,
     framework::standard::{macros::command, Args, CommandResult},
-    model::prelude::Message,
+    http::Http,
+    model::prelude::{ChannelId, Message, MessageId},
     prelude::Context,
 };
-use songbird::{create_player, input::Restartable};
+use songbird::{
+    create_player, input::Restartable, Event, EventContext, EventHandler as VoiceEventHandler,
+};
+
+struct PeriodicNotifier {
+    chan_id: ChannelId,
+    http: Arc<Http>,
+    message_id: MessageId,
+    progress_bar: SeekBar,
+}
+
+#[async_trait]
+impl VoiceEventHandler for PeriodicNotifier {
+    async fn act(&self, ctx: &EventContext<'_>) -> Option<Event> {
+        if let EventContext::Track([(track_state, _handler)]) = ctx {
+            check_msg(
+                self.chan_id
+                    .edit_message(&self.http, self.message_id, |m| {
+                        m.content(self.progress_bar.display(track_state.position))
+                    })
+                    .await,
+            );
+        }
+
+        None
+    }
+}
 
 #[command]
 #[only_in(guilds)]
@@ -43,6 +76,7 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
 
     if let Some(handler_lock) = manager.get(guild_id) {
         let mut handler = handler_lock.lock().await;
+        let send_http = ctx.http.clone();
 
         let source = match Restartable::ytdl(url, true).await {
             Ok(source) => source,
@@ -55,22 +89,30 @@ async fn play(ctx: &Context, msg: &Message, mut args: Args) -> CommandResult {
             }
         };
 
-        let (mut audio, _) = create_player(source.into());
+        let (mut audio, audio_handler) = create_player(source.into());
         audio.set_volume(0.05);
 
         // 排他的に音楽再生
         handler.enqueue(audio);
 
-        let queue_len = handler.queue().len();
-        if queue_len == 1 {
-            check_msg(msg.channel_id.say(&ctx.http, "再生中～～").await);
-        } else {
-            check_msg(
-                msg.channel_id
-                    .say(&ctx.http, format!("{}曲後に再生されるよ", queue_len - 1))
-                    .await,
-            );
-        }
+        msg.channel_id
+            .say(&send_http, display_queue(handler.queue()))
+            .await
+            .unwrap();
+
+        let progress_bar = SeekBar::from(audio_handler.metadata());
+
+        let message = msg.channel_id.say(&send_http, "```\n```").await.unwrap();
+
+        let _ = audio_handler.add_event(
+            Event::Periodic(Duration::from_secs(1), None),
+            PeriodicNotifier {
+                chan_id: msg.channel_id,
+                http: send_http.clone(),
+                message_id: message.id,
+                progress_bar,
+            },
+        );
     } else {
         check_msg(
             msg.channel_id

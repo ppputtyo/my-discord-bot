@@ -8,44 +8,24 @@ use serenity::client::Context;
 use serenity::{
     async_trait,
     client::{Client, EventHandler},
-    framework::{
-        standard::{
-            macros::group,
-        },
-        StandardFramework,
-    },
-    model::{gateway::Ready},
+    framework::{standard::macros::group, StandardFramework},
+    model::gateway::Ready,
     prelude::GatewayIntents,
 };
 
 use commands::{
-    join::*, 
-    leave::*, 
-    neko::*, 
-    play::*, 
-    deafen::*,
-    undeafen::*,
-    mute::*, 
-    unmute::*,
-    ping::*, 
-    skip::*, 
-    pause::*,
-    resume::*,
-    saikoro::*,
-    nurupo::*
+    deafen::*, join::*, leave::*, mute::*, neko::*, nurupo::*, pause::*, ping::*, play::*,
+    queue::*, resume::*, saikoro::*, seek::*, skip::*, undeafen::*, unmute::*,
 };
 
 use crate::util::get_token;
 
-use std::{collections::HashSet};
+use std::collections::HashSet;
 
 use serenity::framework::standard::{
-    help_commands,
-    macros:: help,
-    Args, CommandGroup, CommandResult, HelpOptions,
+    help_commands, macros::help, Args, CommandGroup, CommandResult, HelpOptions,
 };
-use serenity::model::{channel::Message,  id::UserId};
-
+use serenity::model::{channel::Message, id::UserId};
 
 struct Handler;
 
@@ -80,20 +60,22 @@ async fn my_help(
 #[description("汎用コマンド")]
 #[summary("一般")]
 #[commands(
-    deafen, 
+    deafen,
     join,   // VCに参加
     leave,  // VCから退出
     mute,   // ミュート
     play,   // 音楽再生
     ping,   // ping-pong
-    undeafen, 
+    undeafen,
     unmute, // mute解除
     neko,   // 猫の鳴き声
     skip,   // スキップ
     pause, // 一時停止
     resume,// 一時停止解除
-    saikoro, 
-    nurupo
+    saikoro,
+    nurupo,
+    seek,
+    queue
 )]
 
 struct General;
@@ -133,4 +115,3 @@ async fn main() {
     tokio::signal::ctrl_c().await.expect("");
     println!("Received Ctrl-C, shutting down.");
 }
-
