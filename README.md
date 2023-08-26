@@ -43,5 +43,6 @@ yt-dlpとffmpeg のインストール、discord bot の登録方法は[こちら
 
 ## 動作確認済み環境
 - Windows11
+- Ubuntu 23.04
 
 (私のM1 MacではLLVMのリンカ周りでエラーが出て実行できませんでした。)
